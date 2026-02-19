@@ -24,9 +24,8 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock next/link
-jest.mock('next/link', () => ({
-  __esModule: true,
-  default: ({
+jest.mock('next/link', () => {
+  const MockLink = ({
     children,
     href,
     ...props
@@ -34,23 +33,30 @@ jest.mock('next/link', () => ({
     children: React.ReactNode;
     href: string;
     [key: string]: unknown;
-  }) => React.createElement('a', { href, ...props }, children),
-}));
+  }) => React.createElement('a', { href, ...props }, children);
+  MockLink.displayName = 'MockLink';
+  return { __esModule: true, default: MockLink };
+});
 
 // Mock framer-motion
-jest.mock('framer-motion', () => ({
-  motion: {
-    div: React.forwardRef(
-      (props: Record<string, unknown>, ref: React.Ref<HTMLDivElement>) =>
-        React.createElement('div', { ...props, ref })
-    ),
-    button: React.forwardRef(
-      (props: Record<string, unknown>, ref: React.Ref<HTMLButtonElement>) =>
-        React.createElement('button', { ...props, ref })
-    ),
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
-}));
+jest.mock('framer-motion', () => {
+  const RefDiv = React.forwardRef(
+    (props: Record<string, unknown>, ref: React.Ref<HTMLDivElement>) =>
+      React.createElement('div', { ...props, ref })
+  );
+  RefDiv.displayName = 'MockMotionDiv';
+
+  const RefButton = React.forwardRef(
+    (props: Record<string, unknown>, ref: React.Ref<HTMLButtonElement>) =>
+      React.createElement('button', { ...props, ref })
+  );
+  RefButton.displayName = 'MockMotionButton';
+
+  return {
+    motion: { div: RefDiv, button: RefButton },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+  };
+});
 
 // Mock StoryCommentsDialog
 jest.mock('@/components/story-comments-dialog', () => ({
@@ -65,7 +71,8 @@ jest.mock('@/components/story-comments-dialog', () => ({
 const mockStory = {
   id: 'story-1',
   title: 'The Quantum Garden',
-  content: 'A physicist discovers a garden that grows in quantum superposition...',
+  content:
+    'A physicist discovers a garden that grows in quantum superposition...',
   author: 'Alice Chen',
   authorAvatar: '/avatars/alice.png',
   likes: 42,
@@ -177,7 +184,9 @@ describe('StoryCard', () => {
   describe('Accessibility', () => {
     it('has correct aria-label on the view story button', () => {
       render(<StoryCard story={mockStory} />);
-      const viewButton = screen.getByLabelText('View story: The Quantum Garden');
+      const viewButton = screen.getByLabelText(
+        'View story: The Quantum Garden'
+      );
       expect(viewButton).toBeInTheDocument();
     });
 
@@ -191,7 +200,9 @@ describe('StoryCard', () => {
   describe('Props Behavior', () => {
     it('renders without link wrapper when hideLink is true', () => {
       render(<StoryCard story={mockStory} hideLink />);
-      expect(screen.queryByLabelText('View story: The Quantum Garden')).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText('View story: The Quantum Garden')
+      ).not.toBeInTheDocument();
     });
 
     it('shows create similar button when showCreateButton is true', () => {

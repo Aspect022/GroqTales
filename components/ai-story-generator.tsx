@@ -51,7 +51,7 @@ interface AIStoryGeneratorProps {
   className?: string;
 }
 
-const DRAFT_KEY = "groqtales_story_draft_v1";
+const DRAFT_KEY = 'groqtales_story_draft_v1';
 
 interface StoryDraft {
   prompt: string;
@@ -489,84 +489,39 @@ export default function AIStoryGenerator({
 
     console.log('Story Parameters:', storyParams);
 
-    // Real API call to Groq backend
-    try {
-      const response = await fetch('/api/groq', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'generate',
-          prompt,
-          genre: selectedGenres.join(', '),
-          length: storyLength,
-          options: {
-            tone,
-            characters: {
-              name: mainCharacterName,
-              count: characterCount,
-              traits: characterTraits,
-              age: characterAge,
-              background: characterBackground,
-              type: protagonistType,
-            },
-            setting: {
-              timePeriod,
-              location: locationType,
-              worldBuilding: worldBuildingDepth,
-              atmosphere,
-            },
-            style: {
-              voice: narrativeVoice,
-              writingStyle,
-              readingLevel,
-              mood,
-            },
-            plot: {
-              type: plotType,
-              conflict: conflictType,
-              arc: storyArc,
-              pacing,
-              ending: endingType,
-              twists: plotTwists,
-            },
-            themes: {
-              primary: primaryTheme,
-              secondary: secondaryThemes,
-            },
-          },
-        }),
-      });
+    // Simulate API call
+    setTimeout(() => {
+      const mockStory = `In the neon-soaked streets of Neo-Tokyo, where the rain never stopped and the holograms danced like ghosts, ${
+        mainCharacterName || 'Kael'
+      } tightened ${
+        mainCharacterName ? 'their' : 'his'
+      } grip on the data-drive. "They said it couldn't be done," ${
+        mainCharacterName ? 'they' : 'he'
+      } muttered, the cybernetic implant in ${
+        mainCharacterName ? 'their' : 'his'
+      } left eye whirring softly.
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to generate story');
-      }
+The corporation known as Omni-Corp had eyes everywhere, but they didn't have this. A code so pure, so chaotic, it could rewrite reality itself.
 
-      const data = await response.json();
-      setGeneratedStory(data.result);
+Suddenly, a shadow detached itself from the alley wall. "Hand it over, ${
+        mainCharacterName || 'Kael'
+      }," a voice rasped, metallic and cold. It was Unit 734, a hunter-killer droid with a reputation for leaving no witnesses.
+
+${mainCharacterName || 'Kael'} smirked, pulling ${
+        mainCharacterName ? 'their' : 'his'
+      } plasma-pistol from its holster. "Come and get it, tin can."
+
+The air crackled with energy as the first shot was fired...`;
+
+      setGeneratedStory(mockStory);
+      setIsGenerating(false);
       toast({
         title: 'BOOM! STORY GENERATED!',
         description: 'Your epic tale is ready for review!',
         className:
           'font-bangers bg-green-400 text-black border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
       });
-    } catch (error) {
-      console.error('Story generation error:', error);
-      toast({
-        title: 'OOPS! GENERATION FAILED!',
-        description:
-          error instanceof Error
-            ? error.message
-            : 'Something went wrong. Please try again!',
-        variant: 'destructive',
-        className:
-          'font-bangers border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]',
-      });
-    } finally {
-      setIsGenerating(false);
-    }
+    }, 3000);
   };
 
   const handleMint = async () => {
@@ -688,13 +643,18 @@ export default function AIStoryGenerator({
                         </div>
 
                         <div>
-                          <h3 id="draft-recovery-title" className="font-bangers text-2xl mb-2">
+                          <h3
+                            id="draft-recovery-title"
+                            className="font-bangers text-2xl mb-2"
+                          >
                             DRAFT RECOVERED!
                           </h3>
                           <p className="text-sm text-muted-foreground">
                             We found an unsaved draft from{' '}
-                            {new Date(recoveredDraft.updatedAt).toLocaleString()}.
-                            Would you like to restore it?
+                            {new Date(
+                              recoveredDraft.updatedAt
+                            ).toLocaleString()}
+                            . Would you like to restore it?
                           </p>
                         </div>
 
@@ -706,35 +666,59 @@ export default function AIStoryGenerator({
                               setStoryTitle(recoveredDraft.storyTitle);
                               setSelectedGenres(recoveredDraft.selectedGenres);
                               setStoryLength(recoveredDraft.storyLength);
-                              setMainCharacterName(recoveredDraft.mainCharacterName);
+                              setMainCharacterName(
+                                recoveredDraft.mainCharacterName
+                              );
                               setCharacterCount(recoveredDraft.characterCount);
-                              setCharacterTraits(recoveredDraft.characterTraits);
+                              setCharacterTraits(
+                                recoveredDraft.characterTraits
+                              );
                               setCharacterAge(recoveredDraft.characterAge);
-                              setCharacterBackground(recoveredDraft.characterBackground);
-                              setProtagonistType(recoveredDraft.protagonistType);
+                              setCharacterBackground(
+                                recoveredDraft.characterBackground
+                              );
+                              setProtagonistType(
+                                recoveredDraft.protagonistType
+                              );
                               setPlotType(recoveredDraft.plotType);
                               setConflictType(recoveredDraft.conflictType);
                               setStoryArc(recoveredDraft.storyArc);
                               setPacing(recoveredDraft.pacing);
                               setEndingType(recoveredDraft.endingType);
                               setPlotTwists(recoveredDraft.plotTwists);
-                              setIncludeFlashbacks(recoveredDraft.includeFlashbacks);
+                              setIncludeFlashbacks(
+                                recoveredDraft.includeFlashbacks
+                              );
                               setTimePeriod(recoveredDraft.timePeriod);
                               setLocationType(recoveredDraft.locationType);
-                              setWorldBuildingDepth(recoveredDraft.worldBuildingDepth);
+                              setWorldBuildingDepth(
+                                recoveredDraft.worldBuildingDepth
+                              );
                               setAtmosphere(recoveredDraft.atmosphere);
                               setNarrativeVoice(recoveredDraft.narrativeVoice);
                               setTone(recoveredDraft.tone);
                               setWritingStyle(recoveredDraft.writingStyle);
                               setReadingLevel(recoveredDraft.readingLevel);
                               setMood(recoveredDraft.mood);
-                              setDialoguePercentage(recoveredDraft.dialoguePercentage);
-                              setDescriptionDetail(recoveredDraft.descriptionDetail);
+                              setDialoguePercentage(
+                                recoveredDraft.dialoguePercentage
+                              );
+                              setDescriptionDetail(
+                                recoveredDraft.descriptionDetail
+                              );
                               setPrimaryTheme(recoveredDraft.primaryTheme);
-                              setSecondaryThemes(recoveredDraft.secondaryThemes);
-                              setMoralComplexity(recoveredDraft.moralComplexity);
-                              setSocialCommentary(recoveredDraft.socialCommentary);
-                              setSocialCommentaryTopic(recoveredDraft.socialCommentaryTopic);
+                              setSecondaryThemes(
+                                recoveredDraft.secondaryThemes
+                              );
+                              setMoralComplexity(
+                                recoveredDraft.moralComplexity
+                              );
+                              setSocialCommentary(
+                                recoveredDraft.socialCommentary
+                              );
+                              setSocialCommentaryTopic(
+                                recoveredDraft.socialCommentaryTopic
+                              );
                               setViolenceLevel(recoveredDraft.violenceLevel);
                               setRomanceLevel(recoveredDraft.romanceLevel);
                               setLanguageLevel(recoveredDraft.languageLevel);
@@ -754,8 +738,10 @@ export default function AIStoryGenerator({
                               setRecoveredDraft(null);
                               toast({
                                 title: 'DRAFT RESTORED!',
-                                description: 'Your previous work has been recovered.',
-                                className: 'font-bangers bg-green-400 text-black border-4 border-black',
+                                description:
+                                  'Your previous work has been recovered.',
+                                className:
+                                  'font-bangers bg-green-400 text-black border-4 border-black',
                               });
                             }}
                             className="flex-1 bg-green-500 hover:bg-green-600 text-white font-bangers px-6 py-3"
@@ -775,7 +761,8 @@ export default function AIStoryGenerator({
                               toast({
                                 title: 'DRAFT DISCARDED',
                                 description: 'Starting fresh!',
-                                className: 'font-bangers bg-gray-400 text-black border-4 border-black',
+                                className:
+                                  'font-bangers bg-gray-400 text-black border-4 border-black',
                               });
                             }}
                             className="flex-1 font-bangers border-4 border-black bg-white text-black hover:bg-gray-100"
@@ -837,9 +824,10 @@ export default function AIStoryGenerator({
                         onClick={() => toggleGenre(g)}
                         className={`
                           font-bangers text-lg px-4 py-2 rounded-lg border-4 border-black transition-all transform hover:-translate-y-1
-                          ${selectedGenres.includes(g)
-                            ? 'bg-blue-400 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-1'
-                            : 'bg-white text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                          ${
+                            selectedGenres.includes(g)
+                              ? 'bg-blue-400 text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-1'
+                              : 'bg-white text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
                           }
                         `}
                       >
@@ -925,7 +913,10 @@ export default function AIStoryGenerator({
                               value={characterCount}
                               onValueChange={setCharacterCount}
                             >
-                              <SelectTrigger className="border-2 border-black" aria-label="Character Count">
+                              <SelectTrigger
+                                className="border-2 border-black"
+                                aria-label="Character Count"
+                              >
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -948,10 +939,11 @@ export default function AIStoryGenerator({
                               <button
                                 key={trait}
                                 onClick={() => toggleTrait(trait)}
-                                className={`px-3 py-1 rounded-md border-2 border-black text-sm font-bold transition-all ${characterTraits.includes(trait)
+                                className={`px-3 py-1 rounded-md border-2 border-black text-sm font-bold transition-all ${
+                                  characterTraits.includes(trait)
                                     ? 'bg-blue-400 text-white'
                                     : 'bg-white text-black hover:bg-gray-100'
-                                  }`}
+                                }`}
                               >
                                 {trait}
                               </button>
@@ -968,7 +960,10 @@ export default function AIStoryGenerator({
                               value={characterAge}
                               onValueChange={setCharacterAge}
                             >
-                              <SelectTrigger className="border-2 border-black" aria-label="Character Age">
+                              <SelectTrigger
+                                className="border-2 border-black"
+                                aria-label="Character Age"
+                              >
                                 <SelectValue placeholder="Select age range" />
                               </SelectTrigger>
                               <SelectContent>
@@ -987,7 +982,10 @@ export default function AIStoryGenerator({
                               value={protagonistType}
                               onValueChange={setProtagonistType}
                             >
-                              <SelectTrigger className="border-2 border-black" aria-label="Protagonist Type">
+                              <SelectTrigger
+                                className="border-2 border-black"
+                                aria-label="Protagonist Type"
+                              >
                                 <SelectValue placeholder="Select type" />
                               </SelectTrigger>
                               <SelectContent>
@@ -1045,7 +1043,10 @@ export default function AIStoryGenerator({
                               value={plotType}
                               onValueChange={setPlotType}
                             >
-                              <SelectTrigger className="border-2 border-black" aria-label="Plot Type">
+                              <SelectTrigger
+                                className="border-2 border-black"
+                                aria-label="Plot Type"
+                              >
                                 <SelectValue placeholder="Select plot type" />
                               </SelectTrigger>
                               <SelectContent>
@@ -1070,7 +1071,10 @@ export default function AIStoryGenerator({
                               value={conflictType}
                               onValueChange={setConflictType}
                             >
-                              <SelectTrigger className="border-2 border-black" aria-label="Conflict Type">
+                              <SelectTrigger
+                                className="border-2 border-black"
+                                aria-label="Conflict Type"
+                              >
                                 <SelectValue placeholder="Select conflict" />
                               </SelectTrigger>
                               <SelectContent>
@@ -1103,7 +1107,10 @@ export default function AIStoryGenerator({
                               value={storyArc}
                               onValueChange={setStoryArc}
                             >
-                              <SelectTrigger className="border-2 border-black" aria-label="Story Arc">
+                              <SelectTrigger
+                                className="border-2 border-black"
+                                aria-label="Story Arc"
+                              >
                                 <SelectValue placeholder="Select arc" />
                               </SelectTrigger>
                               <SelectContent>
@@ -1127,7 +1134,10 @@ export default function AIStoryGenerator({
                               Pacing
                             </Label>
                             <Select value={pacing} onValueChange={setPacing}>
-                              <SelectTrigger className="border-2 border-black" aria-label="Pacing">
+                              <SelectTrigger
+                                className="border-2 border-black"
+                                aria-label="Pacing"
+                              >
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
@@ -1567,10 +1577,11 @@ export default function AIStoryGenerator({
                               <button
                                 key={theme}
                                 onClick={() => toggleTheme(theme.toLowerCase())}
-                                className={`px-3 py-1 rounded-md border-2 border-black text-sm font-bold transition-all ${secondaryThemes.includes(theme.toLowerCase())
+                                className={`px-3 py-1 rounded-md border-2 border-black text-sm font-bold transition-all ${
+                                  secondaryThemes.includes(theme.toLowerCase())
                                     ? 'bg-pink-400 text-white'
                                     : 'bg-white text-black hover:bg-gray-100'
-                                  }`}
+                                }`}
                               >
                                 {theme}
                               </button>
@@ -1924,10 +1935,11 @@ export default function AIStoryGenerator({
                                     ]);
                                   }
                                 }}
-                                className={`px-3 py-1 rounded-md border-2 border-black text-sm font-bold transition-all ${avoidCliches.includes(trope.toLowerCase())
+                                className={`px-3 py-1 rounded-md border-2 border-black text-sm font-bold transition-all ${
+                                  avoidCliches.includes(trope.toLowerCase())
                                     ? 'bg-red-400 text-white'
                                     : 'bg-white text-black hover:bg-gray-100'
-                                  }`}
+                                }`}
                               >
                                 {trope}
                               </button>
@@ -1965,10 +1977,11 @@ export default function AIStoryGenerator({
                                     ]);
                                   }
                                 }}
-                                className={`px-3 py-1 rounded-md border-2 border-black text-sm font-bold transition-all ${includeTropes.includes(trope.toLowerCase())
+                                className={`px-3 py-1 rounded-md border-2 border-black text-sm font-bold transition-all ${
+                                  includeTropes.includes(trope.toLowerCase())
                                     ? 'bg-green-400 text-white'
                                     : 'bg-white text-black hover:bg-gray-100'
-                                  }`}
+                                }`}
                               >
                                 {trope}
                               </button>
@@ -2020,7 +2033,10 @@ export default function AIStoryGenerator({
                             value={modelSelection}
                             onValueChange={setModelSelection}
                           >
-                            <SelectTrigger className="border-2 border-black" aria-label="AI Model Selection">
+                            <SelectTrigger
+                              className="border-2 border-black"
+                              aria-label="AI Model Selection"
+                            >
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>

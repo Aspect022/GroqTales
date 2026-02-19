@@ -8,8 +8,18 @@ import {
   testGroqConnection,
   testGroqSpecialModel,
 } from '@/lib/groq-service';
+import { rateLimiters, checkRateLimit, getClientIp } from '@/lib/rate-limit';
+
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 10 requests per minute for AI generation
+    const ip = getClientIp(request);
+    const rateLimitResponse = await checkRateLimit(
+      rateLimiters.ai,
+      `groq:${ip}`
+    );
+    if (rateLimitResponse) return rateLimitResponse;
+
     const body = await request.json();
     const {
       action,

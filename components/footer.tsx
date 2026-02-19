@@ -36,7 +36,12 @@ export function Footer() {
     },
     {
       icon: (
-        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          className="h-5 w-5"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
         </svg>
       ),
@@ -51,8 +56,10 @@ export function Footer() {
   ];
 
   return (
-    <footer role="contentinfo" className="relative mt-20 border-t-8 border-foreground dark:border-slate-700 bg-card dark:bg-slate-950">
-      {/* Premium Background Glows for Dark Mode */}
+    <footer
+      role="contentinfo"
+      className="relative mt-20 border-t-8 border-foreground dark:border-slate-700 bg-card dark:bg-slate-950"
+    >
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-0 dark:opacity-100">
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-600/5 blur-[120px]" />
         <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-600/5 blur-[120px]" />
@@ -60,9 +67,7 @@ export function Footer() {
 
       <div className="relative">
         <div className="container mx-auto px-6 py-16">
-          {/* Main Footer Content Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12 mb-12">
-            {/* Brand Section */}
             <div className="space-y-6 flex flex-col items-center sm:items-start">
               <Link href="/" className="group inline-block">
                 <div className="relative">
@@ -78,19 +83,27 @@ export function Footer() {
                   </div>
                 </div>
               </Link>
+
               <div className="text-center sm:text-left">
                 <h3 className="text-xl font-black text-foreground dark:text-white uppercase mb-2">
                   GroqTales
                 </h3>
                 <p className="text-sm font-bold text-foreground/70 dark:text-slate-400 leading-relaxed max-w-xs">
-                  Empowering creators with AI-driven storytelling and Web3 ownership.
+                  Empowering creators with AI-driven storytelling and Web3
+                  ownership.
                 </p>
               </div>
+
               <div className="inline-flex items-center gap-2 text-xs font-black text-foreground dark:text-slate-300 uppercase tracking-wide bg-primary/10 dark:bg-primary/5 px-4 py-2 border-2 border-primary/30 dark:border-primary/20">
                 <Sparkles className="w-3 h-3" />
                 Create • Mint • Own
               </div>
-              <div className="flex gap-3 pt-2" role="group" aria-label="Social media links">
+
+              <div
+                className="flex gap-3 pt-2"
+                role="group"
+                aria-label="Social media links"
+              >
                 {socialLinks.map((link) => (
                   <Link
                     key={link.url}
@@ -108,7 +121,6 @@ export function Footer() {
               </div>
             </div>
 
-            {/* Explore Section */}
             <nav aria-label="Explore links" className="text-left">
               <h3 className="font-black text-lg mb-5 text-foreground dark:text-white border-b-4 border-primary dark:border-accent inline-block pb-1 uppercase">
                 Explore
@@ -134,7 +146,6 @@ export function Footer() {
               </ul>
             </nav>
 
-            {/* Legal Section */}
             <nav aria-label="Legal links" className="text-left">
               <h3 className="font-black text-lg mb-5 text-foreground dark:text-white border-b-4 border-primary dark:border-accent inline-block pb-1 uppercase">
                 Legal
@@ -159,7 +170,6 @@ export function Footer() {
               </ul>
             </nav>
 
-            {/* Resources Section */}
             <nav aria-label="Resources links" className="text-left">
               <h3 className="font-black text-lg mb-5 text-foreground dark:text-white border-b-4 border-primary dark:border-accent inline-block pb-1 uppercase">
                 Resources
@@ -183,7 +193,6 @@ export function Footer() {
               </ul>
             </nav>
 
-            {/* Built by Section */}
             <div className="text-left">
               <h3 className="font-black text-lg mb-5 text-foreground dark:text-white border-b-4 border-primary dark:border-accent inline-block pb-1 uppercase">
                 Built by
@@ -205,10 +214,8 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Divider */}
           <div className="border-t-4 border-foreground dark:border-slate-700 my-8" />
 
-          {/* Footer Bottom - Copyright & Credits */}
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-bold uppercase">
             <div className="flex flex-col sm:flex-row items-center gap-4 text-center">
               <p className="flex items-center gap-2 text-foreground dark:text-slate-400">
@@ -218,12 +225,16 @@ export function Footer() {
               <span className="hidden sm:inline text-foreground/30">•</span>
               <p className="flex items-center gap-2 text-foreground dark:text-slate-400">
                 <span>Powered by</span>
-                <span className="text-primary dark:text-accent font-black">Monad</span>
+                <span className="text-primary dark:text-accent font-black">
+                  Monad
+                </span>
                 <span>×</span>
-                <span className="text-primary dark:text-accent font-black">Groq AI</span>
+                <span className="text-primary dark:text-accent font-black">
+                  Groq AI
+                </span>
               </p>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 bg-green-500 animate-pulse rounded-full" />
               <span className="text-green-600 dark:text-green-400 font-black">
@@ -232,7 +243,6 @@ export function Footer() {
             </div>
           </div>
         </div>
-
       </div>
 
       <AdminLoginModal open={showAdminModal} onOpenChange={setShowAdminModal} />

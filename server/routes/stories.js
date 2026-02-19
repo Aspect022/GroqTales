@@ -47,26 +47,26 @@ const { authRequired } = require('../middleware/auth');
  *       200:
  *         description: Stories retrieved successfully.
  *         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 data:
-*                   type: array
-*                   description: List of stories
-*                   items:
-*                     type: object
-*                 pagination:
-*                   type: object
-*                   properties:
-*                     page:
-*                       type: integer
-*                     limit:
-*                       type: integer
-*                     total:
-*                       type: integer
-*                     pages:
-*                       type: integer
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   description: List of stories
+ *                   items:
+ *                     type: object
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     pages:
+ *                       type: integer
  *       500:
  *         description: Internal server error.
  */
@@ -154,7 +154,7 @@ router.post('/create', authRequired, async (req, res) => {
 
     return res.status(201).json(story);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res.status(500).json({ error: error.message });
   }
 });

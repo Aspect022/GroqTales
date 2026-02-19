@@ -19,7 +19,12 @@ import * as z from 'zod';
 
 // import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 // import { Badge } from '@/components/ui/badge';
-import {ApiResponse, User, NotificationSettings, PrivacySettings,} from '@/types/api';
+import {
+  ApiResponse,
+  User,
+  NotificationSettings,
+  PrivacySettings,
+} from '@/types/api';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -50,8 +55,7 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import {useWeb3} from '@/components/providers/web3-provider';
-
+import { useWeb3 } from '@/components/providers/web3-provider';
 
 const profileFormSchema = z.object({
   username: z
@@ -76,11 +80,11 @@ export default function SettingsPage() {
   // const [avatar, setAvatar] = useState<string>(
   //   'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3'
   // );
-  
-  const[user, setUser] = useState<User|null>(null);
-  const[notifications, setNotifications] = useState<NotificationSettings>({
-    comments: true, 
-    likes : true,
+
+  const [user, setUser] = useState<User | null>(null);
+  const [notifications, setNotifications] = useState<NotificationSettings>({
+    comments: true,
+    likes: true,
     follows: true,
     email: true,
     push: false,
@@ -88,109 +92,117 @@ export default function SettingsPage() {
     marketing: false,
     updates: true,
   });
-  const[privacy, setPrivacy] =  useState<PrivacySettings>({
+  const [privacy, setPrivacy] = useState<PrivacySettings>({
     profileVisible: true,
     activityVisible: true,
     storiesVisible: true,
     showEmail: false,
     showWallet: false,
   });
-  const[loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     mode: 'onChange',
   });
 
-  // const onSubmit = (data: ProfileFormValues) => {
-  //   // In a real app, this would save the data to the server
-  //   console.log(data);
-  //   // Show success message or redirect
-  // };
-  useEffect(()=>{
-  const controller = new AbortController();
-  async function hydrate(){
-    try{
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,{
-          credentials: 'include',
-          signal: controller.signal,
+  useEffect(() => {
+    const controller = new AbortController();
+    async function hydrate() {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile`,
+          {
+            credentials: 'include',
+            signal: controller.signal,
+          }
+        );
+
+        if (!res.ok) throw new Error('Failed to fetch profile');
+
+        const json: ApiResponse<User> = await res.json();
+        //const notifJson = await notifRes.json();
+        if (!json.success || !json.data) {
+          setLoading(false);
+          return;
         }
-      );
-        
-      
-      if(!res.ok ) throw new Error('Failed to fetch profile');
+        const userData = json.data;
+        setUser(userData);
+        setNotifications({
+          comments: userData.preferences?.notifications?.comments ?? true,
+          likes: userData.preferences?.notifications?.likes ?? true,
+          follows: userData.preferences?.notifications?.follows ?? true,
+          email: userData.preferences?.notifications?.email ?? true,
+          push: userData.preferences?.notifications?.push ?? false,
+          sms: userData.preferences?.notifications?.sms ?? false,
+          marketing: userData.preferences?.notifications?.marketing ?? false,
+          updates: userData.preferences?.notifications?.updates ?? true,
+        });
+        setPrivacy(
+          userData.preferences?.privacy ?? {
+            profileVisible: true,
+            activityVisible: true,
+            storiesVisible: true,
+            showEmail: false,
+            showWallet: false,
+          }
+        );
 
-      const json: ApiResponse<User> = await res.json();
-      //const notifJson = await notifRes.json();
-      if(!json.success || !json.data) {
+        form.reset({
+          username: userData.username,
+          displayName: userData.displayName ?? '',
+          email: userData.email ?? '',
+          bio: userData.bio ?? '',
+          //primaryGenre: profileJson.user.primaryGenre ?? '',
+        });
+      } catch (err) {
+        if ((err as Error).name !== 'AbortError') {
+          console.error(err);
+          setFetchError('Failed to load profile. Please try again.');
+        }
+      } finally {
         setLoading(false);
-        return;
       }
-      const userData = json.data;
-      setUser(userData);
-      setNotifications({
-        comments: userData.preferences?.notifications?.comments ?? true,
-        likes: userData.preferences?.notifications?.likes??true,
-        follows: userData.preferences?.notifications?.follows??true,
-        email: userData.preferences?.notifications?.email ??true,
-        push:userData.preferences?.notifications?.push ?? false,
-        sms:userData.preferences?.notifications?.sms ?? false,
-        marketing:userData.preferences?.notifications?.marketing ?? false,
-        updates:userData.preferences?.notifications?.updates ?? true,
-      }
-    );
-      setPrivacy(userData.preferences?.privacy ?? {
-        profileVisible: true,
-        activityVisible: true,
-      });
-
-      form.reset({
-        username: userData.username,
-        displayName: userData.displayName ?? '',
-        email: userData.email ?? '',
-        bio: userData.bio ?? '',
-        //primaryGenre: profileJson.user.primaryGenre ?? '',
-      });
-    } catch(err){
-      console.error(err);
     }
-      finally {
-      setLoading(false);
-    }
-  }
-  hydrate();
-  return () => controller.abort();
-},[form])
-const onSubmit = (data: ProfileFormValues) => {
-    // In a real app, this would save the data to the server
-    console.log(data);
-    // Show success message or redirect
+    hydrate();
+    return () => controller.abort();
+  }, [form]);
+  const onSubmit = (data: ProfileFormValues) => {
+    // TODO: Implement server-side persistence via PUT /api/v1/users/profile
+    console.log('Profile save not yet implemented:', data);
   };
-  const savePreferences = async()=>{
-    try{
+  const savePreferences = async () => {
+    try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/settings/preferences`,
         {
-          method: "PUT",
-          headers: {"Content-Type":"application/json"},
-          credentials: "include",
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({
             notifications,
             privacy,
           }),
         }
       );
-      if(!res.ok){
-        throw new Error("Failed to save preferences");
+      if (!res.ok) {
+        throw new Error('Failed to save preferences');
       }
-      console.log("Preferences saved");
-    } catch(err){
-      console.error("Failed to save preferences:", err);
+      console.log('Preferences saved');
+    } catch (err) {
+      console.error('Failed to save preferences:', err);
     }
   };
-  if(loading || !user)
-    return <div className="p-8">Loading...</div>
+  if (loading) return <div className="p-8">Loading...</div>;
+  if (fetchError)
+    return (
+      <div className="p-8 text-center">
+        <p className="text-red-500 mb-4">{fetchError}</p>
+        <Button onClick={() => window.location.reload()}>Retry</Button>
+      </div>
+    );
+  if (!user) return <div className="p-8">No user data available.</div>;
   return (
     <div className="container max-w-5xl mx-auto py-12 px-4 min-h-screen">
       <div className="mb-8">
@@ -432,80 +444,78 @@ const onSubmit = (data: ProfileFormValues) => {
                 </CardDescription>
               </CardHeader>
               {/* <CardContent className="space-y-6"> */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Email Notifications</h3>
+                <Separator className="my-4" />
+
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium">Email Notifications</h3>
-                  <Separator className="my-4" />
-
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <label
-                          htmlFor="comments"
-                          className="text-sm font-medium"
-                        >
-                          Story Comments
-                        </label>
-                        <p className="text-sm text-muted-foreground">
-                          Receive emails when someone comments on your stories
-                        </p>
-                      </div>
-                      <Switch 
-                        id="comments" 
-                        checked={notifications.comments}
-                        onCheckedChange={(value)=>
-                          setNotifications(prev=>({
-                            ...prev,
-                            comments: value, 
-                          }))
-                        }
-                      />
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <label htmlFor="comments" className="text-sm font-medium">
+                        Story Comments
+                      </label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive emails when someone comments on your stories
+                      </p>
                     </div>
+                    <Switch
+                      id="comments"
+                      checked={notifications.comments}
+                      onCheckedChange={(value) =>
+                        setNotifications((prev) => ({
+                          ...prev,
+                          comments: value,
+                        }))
+                      }
+                    />
+                  </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <label htmlFor="likes" className="text-sm font-medium">
-                          Story Likes
-                        </label>
-                        <p className="text-sm text-muted-foreground">
-                          Receive emails when someone likes your stories
-                        </p>
-                      </div>
-                      <Switch id="likes" 
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <label htmlFor="likes" className="text-sm font-medium">
+                        Story Likes
+                      </label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive emails when someone likes your stories
+                      </p>
+                    </div>
+                    <Switch
+                      id="likes"
                       checked={notifications.likes}
-                        onCheckedChange={(value)=>
-                          setNotifications(prev =>({
-                            ...prev,
-                            likes: value,
-                            }))
-                          }
-                     />
-                    </div>
+                      onCheckedChange={(value) =>
+                        setNotifications((prev) => ({
+                          ...prev,
+                          likes: value,
+                        }))
+                      }
+                    />
+                  </div>
 
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <label
-                          htmlFor="followers"
-                          className="text-sm font-medium"
-                        >
-                          New Followers
-                        </label>
-                        <p className="text-sm text-muted-foreground">
-                          Receive emails when someone follows you
-                        </p>
-                      </div>
-                      <Switch 
-                      id="followers" 
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <label
+                        htmlFor="followers"
+                        className="text-sm font-medium"
+                      >
+                        New Followers
+                      </label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive emails when someone follows you
+                      </p>
+                    </div>
+                    <Switch
+                      id="followers"
                       checked={notifications.follows}
-                        onCheckedChange={(value)=>
-                          setNotifications({
-                            ...notifications,
-                           follows: value,
-                          })
-                        }
-                        />
-                    </div>
+                      onCheckedChange={(value) =>
+                        setNotifications({
+                          ...notifications,
+                          follows: value,
+                        })
+                      }
+                    />
+                  </div>
 
-                    {/* <div className="flex items-center justify-between">
+                  {/* <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
                         <label
                           htmlFor="nft-sale"
@@ -532,32 +542,33 @@ const onSubmit = (data: ProfileFormValues) => {
                        />
                     </div> */}
 
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-0.5">
-                        <label
-                          htmlFor="newsletter"
-                          className="text-sm font-medium"
-                        >
-                          Platform Updates
-                        </label>
-                        <p className="text-sm text-muted-foreground">
-                          Receive emails about new features and platform updates
-                        </p>
-                      </div>
-                      <Switch 
-                      id="newsletter" 
-                      checked={notifications.updates}
-                      onCheckedChange={(value)=>
-                        setNotifications(prev=>({
-                        ...prev,
-                        updates: value,
-                      }))
-                    }/>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <label
+                        htmlFor="newsletter"
+                        className="text-sm font-medium"
+                      >
+                        Platform Updates
+                      </label>
+                      <p className="text-sm text-muted-foreground">
+                        Receive emails about new features and platform updates
+                      </p>
                     </div>
+                    <Switch
+                      id="newsletter"
+                      checked={notifications.updates}
+                      onCheckedChange={(value) =>
+                        setNotifications((prev) => ({
+                          ...prev,
+                          updates: value,
+                        }))
+                      }
+                    />
                   </div>
                 </div>
+              </div>
 
-                {/* <div className="space-y-4">
+              {/* <div className="space-y-4">
                   <h3 className="text-lg font-medium">In-App Notifications</h3>
                   <Separator className="my-4" />
 
@@ -903,13 +914,13 @@ const onSubmit = (data: ProfileFormValues) => {
                           Make your profile visible to all users
                         </p>
                       </div>
-                      <Switch 
-                      id="profile-visibility"
-                      checked={privacy.profileVisible}
-                        onCheckedChange={(value)=>
+                      <Switch
+                        id="profile-visibility"
+                        checked={privacy.profileVisible}
+                        onCheckedChange={(value) =>
                           setPrivacy({
                             ...privacy,
-                           profileVisible: value,
+                            profileVisible: value,
                           })
                         }
                       />
@@ -953,13 +964,15 @@ const onSubmit = (data: ProfileFormValues) => {
                           Show your activity in other users' feeds
                         </p>
                       </div>
-                      <Switch id="show-activity" 
-                      checked={privacy.activityVisible}
-                        onCheckedChange={(value)=>
+                      <Switch
+                        id="show-activity"
+                        checked={privacy.activityVisible}
+                        onCheckedChange={(value) =>
                           setPrivacy({
                             ...privacy,
-                           activityVisible: value,
-                        })}
+                            activityVisible: value,
+                          })
+                        }
                       />
                     </div>
 
@@ -995,7 +1008,7 @@ const onSubmit = (data: ProfileFormValues) => {
                   <h3 className="text-lg font-medium">Account Security</h3>
                   <Separator className="my-4" /> */}
 
-                  {/* <div className="space-y-4">
+                {/* <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
                         <label
@@ -1019,7 +1032,7 @@ const onSubmit = (data: ProfileFormValues) => {
                       </div>
                     </div> */}
 
-                    {/* <div className="mt-4">
+                {/* <div className="mt-4">
                       <Button
                         variant="outline"
                         className="w-full sm:w-auto flex items-center gap-2"
@@ -1065,7 +1078,7 @@ const onSubmit = (data: ProfileFormValues) => {
                        />
                     </div> */}
 
-                    {/* <div className="flex items-center justify-between">
+                  {/* <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
                         <label
                           htmlFor="personalization"

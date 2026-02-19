@@ -56,14 +56,14 @@ interface StoryCardProps {
   isAdmin?: boolean;
 }
 
-export const StoryCard = memo(function StoryCard({
+export const StoryCard = memo(({
   story,
   viewMode = 'grid',
   hideLink = false,
   showCreateButton = false,
   isWalletConnected = false,
   isAdmin = false,
-}: StoryCardProps) {
+}: StoryCardProps) => {
   const router = useRouter();
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
 
@@ -104,7 +104,10 @@ export const StoryCard = memo(function StoryCard({
             <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300 bg-black/40 z-10">
               <button
                 className="bg-white text-black px-3 py-1.5 rounded-lg text-sm font-medium flex items-center shadow-lg hover:scale-105 active:scale-95 transition-transform"
-                onClick={(e) => { e.stopPropagation(); handleViewNFT(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleViewNFT();
+                }}
                 aria-label={`View NFT: ${story.title}`}
               >
                 View NFT <ArrowUpRight className="h-3.5 w-3.5 ml-1" />
@@ -174,7 +177,10 @@ export const StoryCard = memo(function StoryCard({
                 size="icon"
                 className="h-6 w-6"
                 aria-label={`Create a story similar to ${story.title}`}
-                onClick={(e) => { e.stopPropagation(); handleCreateSimilar(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCreateSimilar();
+                }}
               >
                 <PenSquare className="h-3.5 w-3.5" />
               </Button>
@@ -228,5 +234,6 @@ export const StoryCard = memo(function StoryCard({
     </>
   );
 });
+StoryCard.displayName = 'StoryCard';
 // Default export for backward compatibility
 export default StoryCard;

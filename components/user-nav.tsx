@@ -20,7 +20,6 @@ import {
 import { useToast } from '@/components/ui/use-toast';
 import { truncateAddress } from '@/lib/utils';
 
-
 export function UserNav() {
   const { account, connectWallet, disconnectWallet } = useWeb3();
   const { toast } = useToast();
@@ -30,13 +29,15 @@ export function UserNav() {
     const fetchUserData = async () => {
       if (account) {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile/${account}`);
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/profile/${account}`
+          );
           if (res.ok) {
             const data = await res.json();
             setDbUser(data.user);
           }
         } catch (err) {
-          console.error("Failed to fetch nav user data", err);
+          console.error('Failed to fetch nav user data', err);
         }
       }
     };
@@ -73,10 +74,19 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" aria-label="User menu" className="relative h-8 w-8 rounded-full">
+        <Button
+          variant="ghost"
+          aria-label="User menu"
+          className="relative h-8 w-8 rounded-full"
+        >
           <Avatar className="h-8 w-8">
-             <AvatarImage src={dbUser?.avatar || "/avatars/default.png"} alt="User Avatar" />
-            <AvatarFallback>{dbUser?.username?.slice(0, 2).toUpperCase() || "U"}</AvatarFallback>
+            <AvatarImage
+              src={dbUser?.avatar || '/avatars/default.png'}
+              alt="User Avatar"
+            />
+            <AvatarFallback>
+              {dbUser?.username?.slice(0, 2).toUpperCase() || 'U'}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -94,8 +104,8 @@ export function UserNav() {
               asChild
               className="cursor-pointer focus:bg-primary/10 focus:text-primary rounded-none transition-all"
             >
-               <Link
-                href={`/profile/${account}`} 
+              <Link
+                href={`/profile/${account}`}
                 className="flex items-center w-full uppercase py-2"
               >
                 <User className="mr-2 h-4 w-4" />
